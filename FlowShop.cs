@@ -3,8 +3,19 @@ using System.Linq;
 
 namespace RoDSStar
 {
+    public enum Product
+    {
+        GYB,
+        FB,
+        SB
+    }
+
     internal class FlowShop
     {
+        // product items can be packed to lots for faster calculation
+        public static int MaxLotSize = 1;
+
+        // define machine count / stage and product operation time / stage
         public Stage[] Stages { get; } =
         {
             new Stage("Vago", 6, new []{5, 8, 6}),
@@ -15,7 +26,7 @@ namespace RoDSStar
             new Stage("Csomagolo", 3, new []{10, 15, 12}),
         };
 
-        public Job[] Jobs { get; private set; }
+        public Job[] Jobs { get; }
 
         public int[] Order { get; private set; }
 
@@ -61,9 +72,9 @@ namespace RoDSStar
                 var job = Jobs[jobIdx];
                 var jobReady = -1;
 
-                for (int lotIdx = 1; lotIdx < (job.Quantity - 1) / Common.MaxLotSize + 2; lotIdx++)
+                for (int lotIdx = 1; lotIdx < (job.Quantity - 1) / MaxLotSize + 2; lotIdx++)
                 {
-                    var lotSize = lotIdx * Common.MaxLotSize > job.Quantity ? lotIdx * Common.MaxLotSize - job.Quantity : Common.MaxLotSize;
+                    var lotSize = lotIdx * MaxLotSize > job.Quantity ? lotIdx * MaxLotSize - job.Quantity : MaxLotSize;
                     int lotReady = 0;
                     foreach (var stage in Stages)
                     {
@@ -79,14 +90,14 @@ namespace RoDSStar
                    }
                 }
 
-                var jobPenalty = Common.GetNumberOfDelayDays(job.DueDateMinutes, jobReady) * job.PenaltyPerDay;
+                var jobPenalty = CommonTime.GetNumberOfDelayDays(job.DueDateMinutes, jobReady) * job.PenaltyPerDay;
                 totalPenalty = totalPenalty + jobPenalty;
             }
 
             var result = new Result()
             {
                 TotalPenalty = totalPenalty,
-                Makespan = Common.ToDateTime(Stages.Last().MachineReady.Max(), false)
+                Makespan = CommonTime.ToDateTime(Stages.Last().MachineReady.Max(), false)
             };
             return result;
         }
@@ -100,9 +111,9 @@ namespace RoDSStar
                 var jobStart = -1;
                 var jobReady = -1;
 
-                for (int lotIdx = 1; lotIdx < (job.Quantity - 1) / Common.MaxLotSize + 2; lotIdx++)
+                for (int lotIdx = 1; lotIdx < (job.Quantity - 1) / MaxLotSize + 2; lotIdx++)
                 {
-                    var lotSize = lotIdx * Common.MaxLotSize > job.Quantity ? lotIdx * Common.MaxLotSize - job.Quantity : Common.MaxLotSize;
+                    var lotSize = lotIdx * MaxLotSize > job.Quantity ? lotIdx * MaxLotSize - job.Quantity : MaxLotSize;
                     var lotReady = 0;
                     foreach (var stage in Stages)
                     {
@@ -125,7 +136,7 @@ namespace RoDSStar
                     }
                 }
 
-                var jobPenalty = Common.GetNumberOfDelayDays(job.DueDateMinutes, jobReady) * job.PenaltyPerDay;
+                var jobPenalty = CommonTime.GetNumberOfDelayDays(job.DueDateMinutes, jobReady) * job.PenaltyPerDay;
                 totalPenalty = totalPenalty + jobPenalty;
 
                 exporter.AddJobExportLine(job, jobPenalty, jobStart, jobReady);
@@ -134,11 +145,9 @@ namespace RoDSStar
             var result = new Result()
             {
                 TotalPenalty = totalPenalty,
-                Makespan = Common.ToDateTime(Stages.Last().MachineReady.Max(), false)
+                Makespan = CommonTime.ToDateTime(Stages.Last().MachineReady.Max(), false)
             };
             return result;
         }
-
-
     }
 }

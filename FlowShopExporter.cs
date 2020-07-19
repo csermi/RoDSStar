@@ -38,8 +38,8 @@ namespace RoDSStar
         {
             var machineId = $"{stage.Id}-{stage.NextMachineIdx + 1}";
             var lotStart = lotReady - minutes;
-            var startDay = lotStart / Common.TotalMinutesInADay;
-            var readyDay = lotReady / Common.TotalMinutesInADay;
+            var startDay = lotStart / CommonTime.TotalMinutesInADay;
+            var readyDay = lotReady / CommonTime.TotalMinutesInADay;
 
             if (startDay == readyDay)
             {
@@ -48,7 +48,7 @@ namespace RoDSStar
             else
             {
                 // job ends on other day
-                var dayEnding = (startDay + 1) * Common.TotalMinutesInADay;
+                var dayEnding = (startDay + 1) * CommonTime.TotalMinutesInADay;
                 AddMachineExportLine(lotStart, dayEnding, machineId, job.Id );
                 AddMachineExportLine(dayEnding, lotReady, machineId, job.Id );
             }
@@ -61,9 +61,9 @@ namespace RoDSStar
                 job.Id,
                 (job.Quantity * job.ProfitPerPiece).ToString(),
                 penalty.ToString(),
-                Common.ToDateTime(jobBegin, true).ToString(DateTimeFormatFull),
-                Common.ToDateTime(jobReady, false).ToString(DateTimeFormatFull),
-                Common.ToDateTime(job.DueDateMinutes, false).ToString(DateTimeFormatFull)
+                CommonTime.ToDateTime(jobBegin, true).ToString(DateTimeFormatFull),
+                CommonTime.ToDateTime(jobReady, false).ToString(DateTimeFormatFull),
+                CommonTime.ToDateTime(job.DueDateMinutes, false).ToString(DateTimeFormatFull)
             }));
         }
 
@@ -71,10 +71,10 @@ namespace RoDSStar
         {
             MachineExportContent.AppendLine(string.Join(",", new[]
             {
-                Common.ToDateTime(lotStart, true).ToString(DateTimeFormatOnlyDate),
+                CommonTime.ToDateTime(lotStart, true).ToString(DateTimeFormatOnlyDate),
                 machineId,
-                Common.ToDateTime(lotStart, true).ToString(DateTimeFormatOnlyTime),
-                Common.ToDateTime(lotReady, false).ToString(DateTimeFormatOnlyTime),
+                CommonTime.ToDateTime(lotStart, true).ToString(DateTimeFormatOnlyTime),
+                CommonTime.ToDateTime(lotReady, false).ToString(DateTimeFormatOnlyTime),
                 jobId
             }));
         }

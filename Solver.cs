@@ -7,7 +7,7 @@ namespace RoDSStar
 {
     internal class Solver
     {
-        private FlowShop _flowShop;
+        private readonly FlowShop _flowShop;
 
         private Solution _bestSolution;
 
@@ -28,16 +28,16 @@ namespace RoDSStar
 
             var totalProfitWithoutPenalty = _flowShop.GetTotalProfitWithoutPenalty();
 
-            Common.MaxLotSize = 2;
+            FlowShop.MaxLotSize = 2;
             RunHeuristicNeh("NEH", job => -job.ProcessingTime);
 
-            Common.MaxLotSize = 2;
+            FlowShop.MaxLotSize = 2;
             RunHeuristicNeh("NEHedd", job => job.DueDateMinutes);
 
-            Common.MaxLotSize = 1;
+            FlowShop.MaxLotSize = 1;
             var result = RunSimulation(_bestSolution.Order);
             Console.WriteLine("");
-            Console.WriteLine($"Best solution: {result}; Total profit - penalty: {totalProfitWithoutPenalty - result.TotalPenalty}  LotSize: {Common.MaxLotSize}; Order: {string.Join(" ", _bestSolution.Order)}");
+            Console.WriteLine($"Best solution: {result}; Total profit - penalty: {totalProfitWithoutPenalty - result.TotalPenalty}  LotSize: {FlowShop.MaxLotSize}; Order: {string.Join(" ", _bestSolution.Order)}");
 
             return _bestSolution.Order;
         }
@@ -55,7 +55,7 @@ namespace RoDSStar
             var result = RunSimulation(nehOrder);
             swSim.Stop();
       
-            Console.WriteLine($"{desc}; {result}; LotSize: {Common.MaxLotSize}; Order: {string.Join(" ", nehOrder)}; NEH time: {swNeh.ElapsedMilliseconds}; Simulation time: {swSim.ElapsedMilliseconds}");
+            Console.WriteLine($"{desc}; {result}; LotSize: {FlowShop.MaxLotSize}; Order: {string.Join(" ", nehOrder)}; NEH time: {swNeh.ElapsedMilliseconds}; Simulation time: {swSim.ElapsedMilliseconds}");
 
             if (result.TotalPenalty < _bestSolution.Result.TotalPenalty)
             {

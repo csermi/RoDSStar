@@ -24,7 +24,7 @@ namespace RoDSStar
             Id = id; 
             Product = product;
             Quantity = quantity;
-            DueDateMinutes = Common.ToMinutes(dueDate);
+            DueDateMinutes = CommonTime.ToMinutes(dueDate);
             ProfitPerPiece = profitPerPiece;
             PenaltyPerDay = penaltyPerDay;
         }

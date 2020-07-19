@@ -4,6 +4,7 @@
     {
         public string Id { get; }
         
+        // stores time value (minutes since StartTime) when the machine will be ready/can be used through the scheduling
         public int[] MachineReady { get; }
 
         public int[] ProductMinutes { get; }

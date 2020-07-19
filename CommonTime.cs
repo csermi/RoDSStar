@@ -2,16 +2,12 @@
 
 namespace RoDSStar
 {
-    public enum Product
+   /// <summary>
+    /// Common time constants and calculations.
+    /// We use simple integer to measure time spent since StartTime (minutes) to calculate faster than with DateTime values.
+    /// </summary>
+    public static class CommonTime
     {
-        GYB,
-        FB,
-        SB
-    }
-
-    public static class Common
-    {
-        public static int MaxLotSize = 1;
         public static DateTime StartTime = new DateTime(2020, 7, 20, 6, 0, 0, 0);
 
         public static readonly int MinutesInAHour = 60;

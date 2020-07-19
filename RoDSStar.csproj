@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common.cs" />
+    <Compile Include="CommonTime.cs" />
     <Compile Include="FlowShopExporter.cs" />
     <Compile Include="FlowShop.cs" />
     <Compile Include="FlowShopExportService.cs" />
