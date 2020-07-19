@@ -2,7 +2,7 @@
 RoDSStar
 
 build command:
-csc -out:RoDSStar.exe *.cs
+csc /t:exe -out:RoDSStar.exe *.cs
 
 running code:
 RoDSStar sample.txt
