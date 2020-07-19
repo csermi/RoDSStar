@@ -42,9 +42,20 @@ namespace RoDSStar
             Order = order;
         }
 
+        public int GetTotalProfitWithoutPenalty()
+        {
+            var result = 0;
+            foreach (var job in Jobs)
+            {
+                result += job.ProfitPerPiece * job.Quantity;
+            }
+
+            return result;
+        }
+
         public Result Calculate()
         {
-            var totalTardiness = 0;
+            var totalPenalty = 0;
             foreach (var jobIdx in Order)
             {
                 var job = Jobs[jobIdx];
@@ -68,13 +79,13 @@ namespace RoDSStar
                    }
                 }
 
-                var jobTardiness = Common.GetNumberOfDelayDays(job.DueDateMinutes, jobReady) * job.PenaltyPerDay;
-                totalTardiness = totalTardiness + jobTardiness;
+                var jobPenalty = Common.GetNumberOfDelayDays(job.DueDateMinutes, jobReady) * job.PenaltyPerDay;
+                totalPenalty = totalPenalty + jobPenalty;
             }
 
             var result = new Result()
             {
-                TotalTardiness = totalTardiness,
+                TotalPenalty = totalPenalty,
                 Makespan = Common.ToDateTime(Stages.Last().MachineReady.Max(), false)
             };
             return result;
@@ -82,7 +93,7 @@ namespace RoDSStar
 
         public Result Export(FlowShopExporter exporter)
         {
-            var totalTardiness = 0;
+            var totalPenalty = 0;
             foreach (var jobIdx in Order)
             {
                 var job = Jobs[jobIdx];
@@ -114,18 +125,20 @@ namespace RoDSStar
                     }
                 }
 
-                var jobTardiness = Common.GetNumberOfDelayDays(job.DueDateMinutes, jobReady) * job.PenaltyPerDay;
-                totalTardiness = totalTardiness + jobTardiness;
+                var jobPenalty = Common.GetNumberOfDelayDays(job.DueDateMinutes, jobReady) * job.PenaltyPerDay;
+                totalPenalty = totalPenalty + jobPenalty;
 
-                exporter.AddJobExportLine(job, jobTardiness, jobStart, jobReady);
+                exporter.AddJobExportLine(job, jobPenalty, jobStart, jobReady);
             }
 
             var result = new Result()
             {
-                TotalTardiness = totalTardiness,
+                TotalPenalty = totalPenalty,
                 Makespan = Common.ToDateTime(Stages.Last().MachineReady.Max(), false)
             };
             return result;
         }
+
+
     }
 }

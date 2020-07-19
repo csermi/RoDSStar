@@ -54,13 +54,13 @@ namespace RoDSStar
             }
         }
         
-        public void AddJobExportLine(Job job, int tardiness, int jobBegin, int jobReady)
+        public void AddJobExportLine(Job job, int penalty, int jobBegin, int jobReady)
         {
             JobExportContent.AppendLine(string.Join(",", new[]
             {
                 job.Id,
                 (job.Quantity * job.ProfitPerPiece).ToString(),
-                tardiness.ToString(),
+                penalty.ToString(),
                 Common.ToDateTime(jobBegin, true).ToString(DateTimeFormatFull),
                 Common.ToDateTime(jobReady, false).ToString(DateTimeFormatFull),
                 Common.ToDateTime(job.DueDateMinutes, false).ToString(DateTimeFormatFull)

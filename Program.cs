@@ -33,8 +33,7 @@ namespace RoDSStar
             swTotal.Stop();
 
             Console.WriteLine("");
-            Console.WriteLine($"Total ellapsed time: {swTotal.ElapsedMilliseconds}");
-            Console.ReadLine();   //todo: remove
+            Console.WriteLine($"Total ellapsed time: {swTotal.ElapsedMilliseconds} ms");
         }
     }
 }

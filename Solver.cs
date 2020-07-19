@@ -22,31 +22,22 @@ namespace RoDSStar
             {
                 Result = new Result()
                 {
-                    TotalTardiness = int.MaxValue,
+                    TotalPenalty = int.MaxValue,
                 }
             };
 
+            var totalProfitWithoutPenalty = _flowShop.GetTotalProfitWithoutPenalty();
+
             Common.MaxLotSize = 2;
             RunHeuristicNeh("NEH", job => -job.ProcessingTime);
-
-            Common.MaxLotSize = 10;
-            RunHeuristicNeh("NEH", job => -job.ProcessingTime);
-
 
             Common.MaxLotSize = 2;
             RunHeuristicNeh("NEHedd", job => job.DueDateMinutes);
 
-            Common.MaxLotSize = 10;
-            RunHeuristicNeh("NEHedd", job => job.DueDateMinutes);
- 
-            
             Common.MaxLotSize = 1;
-            var swSim = new Stopwatch();
-            swSim.Start();
             var result = RunSimulation(_bestSolution.Order);
-            swSim.Stop();
             Console.WriteLine("");
-            Console.WriteLine($"Best solution with LotSize = 1: {result}; LotSize: {Common.MaxLotSize}; Order: {string.Join(" ", _bestSolution.Order)}; Simulation time: {swSim.ElapsedMilliseconds}");
+            Console.WriteLine($"Best solution: {result}; Total profit - penalty: {totalProfitWithoutPenalty - result.TotalPenalty}  LotSize: {Common.MaxLotSize}; Order: {string.Join(" ", _bestSolution.Order)}");
 
             return _bestSolution.Order;
         }
@@ -56,7 +47,7 @@ namespace RoDSStar
             var swNeh = new Stopwatch();
             swNeh.Start();
             var nehInitialOrder = _flowShop.Jobs.OrderBy(initOrderFunc).Select(j => _flowShop.Jobs.ToList().IndexOf(j)).ToArray();
-            var nehOrder = RunHeuristicNehByTotalTardiness(nehInitialOrder);
+            var nehOrder = RunHeuristicNehByTotalPenalty(nehInitialOrder);
             swNeh.Stop();
 
             var swSim = new Stopwatch();
@@ -66,21 +57,21 @@ namespace RoDSStar
       
             Console.WriteLine($"{desc}; {result}; LotSize: {Common.MaxLotSize}; Order: {string.Join(" ", nehOrder)}; NEH time: {swNeh.ElapsedMilliseconds}; Simulation time: {swSim.ElapsedMilliseconds}");
 
-            if (result.TotalTardiness < _bestSolution.Result.TotalTardiness)
+            if (result.TotalPenalty < _bestSolution.Result.TotalPenalty)
             {
                 _bestSolution.Result = result;
                 _bestSolution.Order = nehOrder;
             }
         }
 
-        private int[] RunHeuristicNehByTotalTardiness(int[] order)
+        private int[] RunHeuristicNehByTotalPenalty(int[] order)
         {
             var resultGenerator = new List<int>();
             var currentOrder = new List<int>();
 
             foreach (var jobIdx in order)
             {
-                int bestTotalTardiness = int.MaxValue;
+                int bestTotalPenalty = int.MaxValue;
                 int bestIdx = -1;
 
                 for (int idx = 0; idx <= currentOrder.Count; idx++)
@@ -88,10 +79,10 @@ namespace RoDSStar
                     currentOrder.Insert(idx, jobIdx);
                     _flowShop.SetOrder(currentOrder.ToArray());
                     _flowShop.InitStages();
-                    var totalTardiness = _flowShop.Calculate().TotalTardiness;
-                    if (totalTardiness < bestTotalTardiness)
+                    var totalPenalty = _flowShop.Calculate().TotalPenalty;
+                    if (totalPenalty < bestTotalPenalty)
                     {
-                        bestTotalTardiness = totalTardiness;
+                        bestTotalPenalty = totalPenalty;
                         bestIdx = idx;
                     }
 
